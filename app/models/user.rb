@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
     has_many :descriptions, dependent: :destroy
-
+    
 
     has_secure_password
 
@@ -8,5 +8,5 @@ class User < ActiveRecord::Base
     validates :username, uniqueness: true
     validates :email, presence: true
     validates :email, uniqueness: true
-    
+
 end
