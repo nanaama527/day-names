@@ -30,7 +30,7 @@ class ApplicationController < Sinatra::Base
         end
         
         def super?
-            logged_in? && current_user.super
+            logged_in? && current_user.super?
         end
     end
 end
