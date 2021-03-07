@@ -1,0 +1,15 @@
+<% if admin? %>
+  <h1 class="text-center mt-5 mb-5">Our Users</h1>
+
+  <% @users.each do |user| %>
+    <% if user != current_user %>
+    <h3 class="text-center"><a href="/users/<%= user.id %>"><%= user.username %></a></h3>
+    <% end %>
+  <% end %>
+<% else %>
+  <h2>You don't have permission to this page.</h2>
+<% end %>
+
+<% if logged_in? %>
+  <h4 class="text-center mt-5 mb-5"><a href="/users/<%= current_user.id %>"><button class="btn btn-lg btn-dark">Back to Profile</button></a></h4>
+<% end %>
