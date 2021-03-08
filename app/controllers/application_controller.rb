@@ -8,6 +8,8 @@ class ApplicationController < Sinatra::Base
        
     end
 
+    register Sinatra::Flash
+
     get('/') do
         erb :home
     end

@@ -1,11 +1,9 @@
-require 'rack-flash'
-
 class UserController < ApplicationController
 
     get '/users' do
         if admin?
           @users = User.all
-          erb :'users/index'
+          erb :index
         else
           flash[:message] = "You are not permitted to view users list."
           if logged_in?
@@ -18,7 +16,7 @@ class UserController < ApplicationController
     get '/users/:id' do
         if admin? || (logged_in? && current_user.id == params[:id].to_i)
           @user = User.find_by_id(params[:id])
-          erb :'users/show'
+          erb :show
         else
           flash[:message] = "You are not allowed to view other users' info."
           if logged_in?
@@ -36,7 +34,7 @@ class UserController < ApplicationController
             @posts = Post.all.select {|post|
               post.user == @user
             }.reverse
-            erb :'users/user_posts'
+            erb :user_posts
           else
             flash[:message] = "Something went wrong..."
             redirect "/users/#{@user.id}"
@@ -52,21 +50,18 @@ class UserController < ApplicationController
           flash[:message] = "Hello, #{current_user.username.upcase}"
           redirect "/posts"
         end
-        erb :'users/signup'
+        erb :signup
     end
 
     post '/signup' do
         if params[:password] != params[:password_confirm]
+          user = User.new(username: params[:username], password: params[:password])
           flash[:message] = "Passwords did not match..."
           redirect "/signup"
         elsif User.all.find {|user| user.username == params[:username]}
           flash[:message] = "' #{params[:username]} ' is already used by another user."
           redirect "/signup"
-        elsif User.all.find {|user| user.email == params[:email]}
-          flash[:message] = "' #{params[:email]} ' is a registerd email."
-          redirect "/signup"
         end
-    
         params.delete("password_confirm")
     
         if User.all.empty?
@@ -127,7 +122,7 @@ class UserController < ApplicationController
           flash[:message] = "Hello, #{current_user.username.upcase}"
           redirect "/posts"
         else
-          erb :'users/login'
+          erb :login
         end
     end
     
