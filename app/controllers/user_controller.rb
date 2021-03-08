@@ -1,7 +1,6 @@
 require 'rack-flash'
 
-class UserController < AppController
-    use Rack::flash
+class UserController < ApplicationController
 
     get '/users' do
         if admin?
