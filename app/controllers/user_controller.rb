@@ -9,24 +9,14 @@ class UserController < ApplicationController
   end
 
   post '/signup' do
-    if params[:password] != params[:password_confirm]
-      flash[:message] = "Passwords did not match..."
-      redirect "/signup"
-    elsif User.all.find {|user| user.username == params[:username]}
-      flash[:message] = "' #{params[:username]} ' is already used by another user."
-      redirect "/signup"
-    end
 
-    params.delete("password_confirm")
-
-    if User.all.empty?
+    # if User.all.empty?
+    #   @user = User.create(params)
+    #   # @user.admin = true
+    #   # @user.super = true
+    #   @user.save
       @user = User.create(params)
-      @user.admin = true
-      @user.super = true
-      @user.save
-    else
-      @user = User.create(params)
-    end
+    # end
 
     if @user.id
       session[:user_id] = @user.id
@@ -94,7 +84,7 @@ class UserController < ApplicationController
     if user && user.authenticate(params[:password])
       session[:user_id] = user.id
       flash[:message] = "Hello, #{current_user.username.upcase}"
-      redirect '/posts'
+      redirect '/namelist'
     else
       flash[:message] = "Log in failed... Try again."
       redirect '/login'
@@ -125,9 +115,10 @@ class UserController < ApplicationController
   end
 
   get '/users/:id' do
-    if admin? || (logged_in? && current_user.id == params[:id].to_i)
+    if logged_in? && current_user.id == params[:id].to_i
       @user = User.find_by_id(params[:id])
-      erb :'users/show'
+      # @names = @user.names
+      # erb :'namelist/show'
     else
       flash[:message] = "You are not allowed to view other users' info."
       if logged_in?
@@ -137,7 +128,7 @@ class UserController < ApplicationController
     end
   end
 
-  get '/users/:id/posts' do
+  get '/users/:id/namelist' do
     if logged_in?
       @user = User.find_by_id(params[:id])
       if @user

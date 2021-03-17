@@ -26,13 +26,5 @@ class ApplicationController < Sinatra::Base
         def owner?
             current_user == post_owner
         end
-
-        def admin?
-            logged_in? && current_user.admin?
-        end
-        
-        def super?
-            logged_in? && current_user.super?
-        end
     end
 end

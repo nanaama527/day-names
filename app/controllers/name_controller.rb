@@ -2,13 +2,13 @@ class NameController < ApplicationController
     register Sinatra::Flash
     
     get '/namelist/new' do 
-        if is_logged_in?
+        if logged_in?
           erb :'namelist/new'
         else
           flash[:message] = "Looks like you weren't logged in yet. Please log in below."
           redirect to '/login'
         end
-      end
+    end
     
       post '/namelist' do
         if params[:birthday] == "" || params[:day_name] == "" || params[:meaning] == ""  
@@ -28,9 +28,8 @@ class NameController < ApplicationController
     
       # Read
       get '/namelist' do
-        if is_logged_in?
-          @dayname = current_dayname
-          @name = @dayname.name.all
+        if logged_in?
+          @names = Name.all
           erb :'namelist/index'
         else
           flash[:message] = "Looks like you weren't logged in yet. Please log in below."
@@ -39,10 +38,10 @@ class NameController < ApplicationController
       end
     
       get '/namelist/:id' do
-        if is_logged_in?
+        if logged_in?
           @name = Name.find_by_id(params[:id])
           if @name.name_id == session[:name_id]
-            erb :'namelist/show'
+            erb :'namelist/new'
           elsif @name.name_id != session[:name_id]
             redirect '/namelist'
           end
@@ -54,14 +53,14 @@ class NameController < ApplicationController
     
       # Update
       get '/namelist/:id/edit' do
-        if is_logged_in?
+        if logged_in?
           @name = Name.find_by_id(params[:id])
           if @name.name_id == session[:name_id]
             erb :'namelist/edit'
           else
             flash[:message] = "Sorry that's not your review. You can't edit it."
             redirect to '/namelist'
-            end
+          end
         else
           flash[:message] = "Looks like you weren't logged in yet. Please log in below."
           redirect to '/login'
@@ -69,7 +68,7 @@ class NameController < ApplicationController
       end
     
       patch '/names/:id' do
-        if params[:birthday] == "" || params[:day] == "" || params[:month] == "" || params[:year == ""
+        if params[:birthday] == "" || params[:day] == "" || params[:month] == "" || params[:year == ""]
           flash[:message] = "Oops! Birthdays must have a day, month, and year. Please try again."
           redirect to "/names/#{params[:id]}/edit"
         else
@@ -86,12 +85,12 @@ class NameController < ApplicationController
     
       # Delete
       delete '/names/:id/delete' do
-        if is_logged_in?
+        if logged_in?
           @name = Name.find_by_id(params[:id])
           if @name.name_id == session[:name_id]
             @name.delete
             flash[:message] = "The name profile was deleted."
-            redirect to '/reviews'
+            redirect to '/signup'
           end
         else
           flash[:message] = "Looks like you weren't logged in yet. Please log in below."

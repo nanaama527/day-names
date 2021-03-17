@@ -14,7 +14,8 @@ ActiveRecord::Schema.define(version: 2021_03_08_020134) do
 
   create_table "names", force: :cascade do |t|
     t.string "name"
-    t.datetime "birthday"
+    t.text "description"
+    t.integer "user_id"
   end
 
   create_table "users", force: :cascade do |t|
