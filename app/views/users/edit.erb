@@ -1,0 +1,52 @@
+<h1 class="mt-5 mb-3 text-center">Edit User Info</h1>
+
+<div class="container ml-5 mr-5">
+  <form action="/users/<%= @user.id %>" method="POST">
+    <input type="hidden" name="_method" value="patch">
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input type="text" class="form-control" name="username" id="username" value="<%= @user.username %>" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email address</label>
+      <input type="email" class="form-control" name="email" id="email" aria-describedby="emailHelp" value="<%= @user.email %>">
+      <div id="emailHelp" class="form-text">We'll never share your personal info with anyone else.</div>
+    </div>
+
+    <% if super? && current_user.id != @user.id %>
+
+        <div class="mb-3">
+        <h6>Admin?</h6>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="admin" id="admin1" value=true <%= 'checked' if @user.admin %>>
+          <label class="form-check-label" for="admin1">Admin</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="admin" id="admin2" value=false <%= 'checked' if !@user.admin %>>
+          <label class="form-check-label" for="admin2">Not Admin</label>
+        </div>
+        </div>
+    
+        <div class="mb-3">
+        <h6>Super?</h6>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="super" id="super1" value=true <%= 'checked' if @user.super %>>
+          <label class="form-check-label" for="super1">Super</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="super" id="super2" value=false <%= 'checked' if !@user.super %>>
+          <label class="form-check-label" for="super2">Not Super</label>
+        </div>
+        </div>
+
+    <% end %>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input type="password" class="form-control" name="password" id="password" placeholder="******** (required)" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class="text-center"><a href="/users/<%= @user.id %>">Back to User Profile</a></div>

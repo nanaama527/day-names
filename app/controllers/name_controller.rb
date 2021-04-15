@@ -11,16 +11,14 @@ class NameController < ApplicationController
     end
     
       post '/namelist' do
-        if params[:birthday] == "" || params[:day_name] == "" || params[:meaning] == ""  
-          flash[:message] = "Oops! You must enter a birthday to see your day name. Please try again."
+        if params[:name] == "" || params[:description] == "" 
+          flash[:message] = "Oops! You must enter a day name to see your name description. Please try again."
           redirect to '/namelist/new'
         else
-          dayname = current_dayname
           @name = Name.create(
-            :birthday => params[:birthday],
-            :day_name => params[:day_name],
-            :meaning => params[:meaning],
-            :name_id => name.id)
+            :description => params[:description],
+            :name => params[:name],
+            :user_id => session[:user_id])
           redirect to "/namelist/#{@name.id}"
         end
       end
@@ -40,9 +38,9 @@ class NameController < ApplicationController
       get '/namelist/:id' do
         if logged_in?
           @name = Name.find_by_id(params[:id])
-          if @name.name_id == session[:name_id]
+          if @name.user_id == session[:user_id]
             erb :'namelist/new'
-          elsif @name.name_id != session[:name_id]
+          elsif @name.user_id != session[:user_id]
             redirect '/namelist'
           end
         else
@@ -55,10 +53,10 @@ class NameController < ApplicationController
       get '/namelist/:id/edit' do
         if logged_in?
           @name = Name.find_by_id(params[:id])
-          if @name.name_id == session[:name_id]
+          if @name.user_id == session[:user_id]
             erb :'namelist/edit'
           else
-            flash[:message] = "Sorry that's not your review. You can't edit it."
+            flash[:message] = "Sorry that's not your profile. You can't edit it."
             redirect to '/namelist'
           end
         else
@@ -68,15 +66,14 @@ class NameController < ApplicationController
       end
     
       patch '/names/:id' do
-        if params[:birthday] == "" || params[:day] == "" || params[:month] == "" || params[:year == ""]
-          flash[:message] = "Oops! Birthdays must have a day, month, and year. Please try again."
+        if params[:name] == "" || params[:description] == ""  
+          flash[:message] = "Oops! Please try again."
           redirect to "/names/#{params[:id]}/edit"
         else
           @name = Name.find_by_id(params[:id])
-          @name.birthday = params[:birthday]
-          @name.day_name = params[:day_name]
-          @name.meaning = params[:meaning]
-          @name.name_id = current_name.id
+          @name.description = params[:description]
+          @name.name = params[:name]
+          @name.user_id = current_user.id
           @name.save
           flash[:messsage] = "Your day name has been updated!"
           redirect to "/names/#{@name.id}"
@@ -87,7 +84,7 @@ class NameController < ApplicationController
       delete '/names/:id/delete' do
         if logged_in?
           @name = Name.find_by_id(params[:id])
-          if @name.name_id == session[:name_id]
+          if @name.user_id == session[:user_id]
             @name.delete
             flash[:message] = "The name profile was deleted."
             redirect to '/signup'

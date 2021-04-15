@@ -9,15 +9,18 @@ class UserController < ApplicationController
   end
 
   post '/signup' do
+    if params[:password] != params[:password_confirm]
+      flash[:message] = "Passwords did not match..."
+      redirect "/signup"
+    elsif User.all.find {|user| user.username == params[:username]}
+      flash[:message] = "' #{params[:username]} ' is already used by another user."
+      redirect "/signup"
+    end
 
-    # if User.all.empty?
-    #   @user = User.create(params)
-    #   # @user.admin = true
-    #   # @user.super = true
-    #   @user.save
-      @user = User.create(params)
-    # end
-
+    params.delete("password_confirm")
+    
+    @user = User.create(params)
+   
     if @user.id
       session[:user_id] = @user.id
       flash[:message] = "Account successfully created!!!"
@@ -26,6 +29,10 @@ class UserController < ApplicationController
       flash[:message] = "Could not create your account. Please try again."
       redirect "/signup"
     end
+  end
+
+  get '/users/:id' do
+    erb :users/show
   end
 
   get '/users/:id/edit' do
